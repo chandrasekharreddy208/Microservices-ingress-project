@@ -58,26 +58,35 @@ Step 2: Tools Installation
 2.1.1 Connect to the Ingress Server
 vi Jenkins.sh ----> Paste the below content ---->
 
-#!/bin/bash
+ #!/bin/bash
+
 # Update system
 sudo apt update -y
+
 # Install dependencies
 sudo apt install -y fontconfig openjdk-17-jre-headless wget gnupg2
+
 # Download and add the Jenkins GPG key
-wget -O- https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | \\
-    gpg --dearmor | sudo tee /usr/share/keyrings/jenkins-keyring.gpg > /dev/null
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | \
+  gpg --dearmor | sudo tee /usr/share/keyrings/jenkins-keyring.gpg > /dev/null
+
 # Add Jenkins repository
-echo "deb \[signed-by=/usr/share/keyrings/jenkins-keyring.gpg] https://pkg.jenkins.io/debian-stable binary/" | \\
-    sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.gpg] https://pkg.jenkins.io/debian-stable binary/" | \
+  sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
 # Update package lists
 sudo apt update -y
+
 # Install Jenkins
-sudo apt install jenkins -y
-# Start Jenkins
+sudo apt install -y jenkins
+
+# Start and enable Jenkins
 sudo systemctl start jenkins
 sudo systemctl enable jenkins
+
 # Print status
 sudo systemctl status jenkins
+
 
 ----> esc ----> :wq ----> sudo chmod +x jenkins.sh ----> ./jenkins.sh
 
@@ -88,22 +97,30 @@ Access Jenkins and setup Jenkins
 2.1.2 Install Docker
 vi docker.sh ----> Paste the below content ---->
 #!/bin/bash
+
 # Update package manager repositories
 sudo apt-get update
+
 # Install necessary dependencies
 sudo apt-get install -y ca-certificates curl
+
 # Create directory for Docker GPG key
 sudo install -m 0755 -d /etc/apt/keyrings
+
 # Download Docker's GPG key
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
 # Ensure proper permissions for the key
 sudo chmod a+r /etc/apt/keyrings/docker.asc
+
 # Add Docker repository to Apt sources
-echo "deb \[arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \\
-$(. /etc/os-release \&\& echo "$VERSION\_CODENAME") stable" | \\
-sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
 # Update package manager repositories
 sudo apt-get update
+
+# Install Docker
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 ----> esc ----> :wq ----> sudo chmod +x docker.sh ----> ./docker.sh
